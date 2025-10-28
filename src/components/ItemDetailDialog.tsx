@@ -21,9 +21,9 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-card border-border">
         <DialogHeader>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 pr-8">
             <DialogTitle className="text-2xl text-foreground">{item.name}</DialogTitle>
-            <Badge className={categoryColor}>{categoryLabel}</Badge>
+            <Badge className={`${categoryColor} w-fit`}>{categoryLabel}</Badge>
           </div>
         </DialogHeader>
 

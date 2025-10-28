@@ -17,12 +17,12 @@ const Header = ({ onSearchClick }: HeaderProps) => {
         >
           <Search className="h-5 w-5" />
         </Button>
-        
+
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-card">
             <Home className="h-5 w-5 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-bold text-foreground">家具家電管理</h1>
+          <h1 className="text-xl font-bold text-foreground">Home-Log</h1>
         </div>
       </div>
     </header>

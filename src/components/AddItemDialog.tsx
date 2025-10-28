@@ -1,10 +1,21 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,9 +34,13 @@ interface AddItemDialogProps {
 
 const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<"furniture" | "appliance">("furniture");
+  const [category, setCategory] = useState<"furniture" | "appliance">(
+    "furniture"
+  );
   const [imagePreview, setImagePreview] = useState<string>();
-  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split("T")[0]);
+  const [purchaseDate, setPurchaseDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [price, setPrice] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -42,7 +57,7 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim()) {
       toast.error("名前を入力してください");
       return;
@@ -57,7 +72,7 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
       notes: notes.trim() || undefined,
     });
 
-    // Reset form
+    // フォームをリセット
     setName("");
     setCategory("furniture");
     setImagePreview(undefined);
@@ -65,7 +80,7 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
     setPrice("");
     setNotes("");
     onOpenChange(false);
-    
+
     toast.success("アイテムを追加しました");
   };
 
@@ -73,15 +88,23 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-foreground">新しいアイテムを追加</DialogTitle>
+          <DialogTitle className="text-foreground">
+            新しいアイテムを追加
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-foreground">写真</Label>
+            <Label htmlFor="image" className="text-foreground">
+              写真
+            </Label>
             <div className="flex flex-col gap-3">
               {imagePreview ? (
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-                  <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
                   <Button
                     type="button"
                     size="icon"
@@ -95,7 +118,9 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
               ) : (
                 <label className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 hover:bg-muted transition-colors">
                   <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                  <span className="text-sm text-muted-foreground">写真をアップロード</span>
+                  <span className="text-sm text-muted-foreground">
+                    写真をアップロード
+                  </span>
                   <input
                     id="image"
                     type="file"
@@ -109,7 +134,9 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-foreground">名前 *</Label>
+            <Label htmlFor="name" className="text-foreground">
+              名前 *
+            </Label>
             <Input
               id="name"
               value={name}
@@ -121,8 +148,13 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-foreground">カテゴリー *</Label>
-            <Select value={category} onValueChange={(v) => setCategory(v as "furniture" | "appliance")}>
+            <Label htmlFor="category" className="text-foreground">
+              カテゴリー *
+            </Label>
+            <Select
+              value={category}
+              onValueChange={(v) => setCategory(v as "furniture" | "appliance")}
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue />
               </SelectTrigger>
@@ -135,7 +167,9 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date" className="text-foreground">購入日</Label>
+              <Label htmlFor="date" className="text-foreground">
+                購入日
+              </Label>
               <Input
                 id="date"
                 type="date"
@@ -146,7 +180,9 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price" className="text-foreground">価格（円）</Label>
+              <Label htmlFor="price" className="text-foreground">
+                価格（円）
+              </Label>
               <Input
                 id="price"
                 type="number"
@@ -159,7 +195,9 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes" className="text-foreground">メモ</Label>
+            <Label htmlFor="notes" className="text-foreground">
+              メモ
+            </Label>
             <Textarea
               id="notes"
               value={notes}
@@ -179,9 +217,9 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
             >
               キャンセル
             </Button>
-            <Button 
+            <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground"
+              className="flex-1 from-primary to-accent hover:opacity-90 text-primary-foreground"
             >
               追加
             </Button>

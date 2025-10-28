@@ -54,11 +54,11 @@ const SearchDialog = ({ open, onOpenChange, searchQuery, onSearchChange }: Searc
             )}
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleSearch} className="flex-1">
-              検索
-            </Button>
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               キャンセル
+            </Button>
+            <Button onClick={handleSearch} className="flex-1">
+              検索
             </Button>
           </div>
         </div>

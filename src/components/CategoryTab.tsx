@@ -15,7 +15,7 @@ const CategoryTab = ({ items, category, onItemClick }: CategoryTabProps) => {
   
   const totalCost = categoryItems.reduce((sum, item) => sum + (item.price || 0), 0);
   
-  // 直近購入（最新3件）
+  // 直近購入アイテム（最新3件）
   const recentPurchases = [...categoryItems]
     .sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime())
     .slice(0, 3);

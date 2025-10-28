@@ -13,7 +13,7 @@ const StatisticsCards = ({ items }: StatisticsCardsProps) => {
   return (
     <Card className="bg-card/60 backdrop-blur-sm border-border">
       <CardContent className="p-6">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-lg bg-gradient-to-br from-primary/80 to-accent/80">
               <Package className="h-6 w-6 text-primary-foreground" />

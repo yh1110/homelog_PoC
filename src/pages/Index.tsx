@@ -118,7 +118,7 @@ const Index = () => {
       {/* モバイル用FABボタン */}
       <Button
         onClick={() => setIsAddDialogOpen(true)}
-        className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground z-40"
+        className="sm:hidden fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground z-40"
         size="icon"
       >
         <Plus className="h-6 w-6" />

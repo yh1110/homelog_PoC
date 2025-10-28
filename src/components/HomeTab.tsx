@@ -11,10 +11,15 @@ interface HomeTabProps {
 }
 
 const HomeTab = ({ items, onItemClick }: HomeTabProps) => {
-  // 直近追加されたアイテム（最新5件）
+  // 直近追加されたアイテム（1週間以内・最大3件）
   const recentItems = [...items]
+    .filter(item => {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return new Date(item.purchaseDate) >= weekAgo;
+    })
     .sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime())
-    .slice(0, 5);
+    .slice(0, 3);
 
   return (
     <div className="space-y-6 pb-20">
@@ -44,12 +49,12 @@ const HomeTab = ({ items, onItemClick }: HomeTabProps) => {
       </Card>
 
       {/* 直近追加したアイテム */}
-      {recentItems.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">直近追加したアイテム</h3>
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">直近追加したアイテム</h3>
+        </div>
+        {recentItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {recentItems.map((item) => (
               <ItemCard
@@ -59,8 +64,17 @@ const HomeTab = ({ items, onItemClick }: HomeTabProps) => {
               />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <Card className="bg-card/60 backdrop-blur-sm border-border border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Calendar className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground text-center">
+                直近1週間以内に追加されたアイテムはありません
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
