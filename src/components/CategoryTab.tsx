@@ -1,4 +1,4 @@
-import { type Item } from "@/components/ItemList";
+import { type Item } from "@/lib/api/items";
 import { Card, CardContent } from "@/components/ui/card";
 import { Package, DollarSign, Calendar } from "lucide-react";
 import ItemCard from "@/components/ItemCard";
@@ -10,7 +10,7 @@ interface CategoryTabProps {
 }
 
 const CategoryTab = ({ items, category, onItemClick }: CategoryTabProps) => {
-  const categoryItems = items.filter((item) => item.category === category);
+  const categoryItems = items.filter((item) => item.category_id === category);
   const categoryLabel = category === "furniture" ? "家具" : "家電";
 
   const totalCost = categoryItems.reduce(
@@ -22,7 +22,7 @@ const CategoryTab = ({ items, category, onItemClick }: CategoryTabProps) => {
   const recentPurchases = [...categoryItems]
     .sort(
       (a, b) =>
-        new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime()
+        new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime()
     )
     .slice(0, 3);
 
@@ -74,7 +74,7 @@ const CategoryTab = ({ items, category, onItemClick }: CategoryTabProps) => {
                   <div>
                     <p className="font-medium text-foreground">{item.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {item.purchaseDate}
+                      {item.purchase_date}
                     </p>
                   </div>
                   {item.price && (

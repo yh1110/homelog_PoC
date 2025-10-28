@@ -4,17 +4,17 @@ import { Card, CardContent } from "@/components/ui/card";
 interface ItemCardProps {
   id: string;
   name: string;
-  category: "furniture" | "appliance";
-  imageUrl?: string;
-  purchaseDate: string;
+  category_id: "furniture" | "appliance";
+  image_url?: string;
+  purchase_date: string;
   price?: number;
   onClick: () => void;
 }
 
 const ItemCard = ({
   name,
-  imageUrl,
-  purchaseDate,
+  image_url,
+  purchase_date,
   price,
   onClick,
 }: ItemCardProps) => {
@@ -24,9 +24,9 @@ const ItemCard = ({
       onClick={onClick}
     >
       <div className="aspect-square overflow-hidden bg-muted">
-        {imageUrl ? (
+        {image_url ? (
           <img
-            src={imageUrl}
+            src={image_url}
             alt={name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -43,7 +43,7 @@ const ItemCard = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Calendar className="h-3.5 w-3.5" />
-            <span>{purchaseDate}</span>
+            <span>{purchase_date}</span>
           </div>
           {price !== undefined && (
             <p className="font-semibold text-foreground">

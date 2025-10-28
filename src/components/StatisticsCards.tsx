@@ -1,4 +1,4 @@
-import { type Item } from "@/components/ItemList";
+import { type Item } from "@/lib/api/items";
 import { Card, CardContent } from "@/components/ui/card";
 import { Package, DollarSign } from "lucide-react";
 

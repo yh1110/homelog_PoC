@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, DollarSign, FileText, Trash2 } from "lucide-react";
-import type { Item } from "./ItemList";
+import type { Item } from "@/lib/api/items";
 
 interface ItemDetailDialogProps {
   item: Item | null;
@@ -14,8 +14,8 @@ interface ItemDetailDialogProps {
 const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDialogProps) => {
   if (!item) return null;
 
-  const categoryLabel = item.category === "furniture" ? "家具" : "家電";
-  const categoryColor = item.category === "furniture" ? "bg-secondary text-secondary-foreground" : "bg-accent/20 text-accent-foreground";
+  const categoryLabel = item.category_id === "furniture" ? "家具" : "家電";
+  const categoryColor = item.category_id === "furniture" ? "bg-secondary text-secondary-foreground" : "bg-accent/20 text-accent-foreground";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -28,10 +28,10 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
         </DialogHeader>
 
         <div className="space-y-6">
-          {item.imageUrl && (
+          {item.image_url && (
             <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
-              <img 
-                src={item.imageUrl} 
+              <img
+                src={item.image_url}
                 alt={item.name}
                 className="h-full w-full object-cover"
               />
@@ -43,7 +43,7 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
               <Calendar className="h-5 w-5 text-muted-foreground" />
               <div>
                 <p className="text-sm text-muted-foreground">購入日</p>
-                <p className="font-medium">{item.purchaseDate}</p>
+                <p className="font-medium">{item.purchase_date}</p>
               </div>
             </div>
 

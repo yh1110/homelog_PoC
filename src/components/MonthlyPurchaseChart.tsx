@@ -1,4 +1,4 @@
-import { type Item } from "@/components/ItemList";
+import { type Item } from "@/lib/api/items";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
@@ -40,7 +40,7 @@ const MonthlyPurchaseChart = ({ items }: MonthlyPurchaseChartProps) => {
 
   // 月ごとのデータを集計
   const monthlyData = items.reduce((acc, item) => {
-    const date = new Date(item.purchaseDate);
+    const date = new Date(item.purchase_date);
     const monthKey = `${date.getFullYear()}-${String(
       date.getMonth() + 1
     ).padStart(2, "0")}`;

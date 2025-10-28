@@ -1,14 +1,5 @@
 import ItemCard from "./ItemCard";
-
-export interface Item {
-  id: string;
-  name: string;
-  category: "furniture" | "appliance";
-  imageUrl?: string;
-  purchaseDate: string;
-  price?: number;
-  notes?: string;
-}
+import { type Item } from "@/lib/api/items";
 
 interface ItemListProps {
   items: Item[];

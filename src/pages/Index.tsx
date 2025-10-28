@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useItems, useDeleteItem } from "@/hooks/useItems";
+import { type Item } from "@/lib/api/items";
 import Header from "@/components/Header";
-import { type Item } from "@/components/ItemList";
 import AddItemDialog from "@/components/AddItemDialog";
 import ItemDetailDialog from "@/components/ItemDetailDialog";
 import SearchDialog from "@/components/SearchDialog";
@@ -8,49 +10,18 @@ import HomeTab from "@/components/HomeTab";
 import CategoryTab from "@/components/CategoryTab";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Home, Sofa, Zap } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Home, Sofa, Zap, Loader2 } from "lucide-react";
 
 const Index = () => {
-  const [items, setItems] = useState<Item[]>([
-    {
-      id: "1",
-      name: "ダイニングテーブル",
-      category: "furniture",
-      purchaseDate: "2024-01-15",
-      price: 45000,
-      notes: "IKEAで購入、5年保証付き"
-    },
-    {
-      id: "2",
-      name: "冷蔵庫",
-      category: "appliance",
-      purchaseDate: "2023-11-20",
-      price: 120000,
-      notes: "省エネモデル、メーカー保証3年"
-    },
-    {
-      id: "3",
-      name: "ソファ",
-      category: "furniture",
-      purchaseDate: "2024-03-10",
-      price: 78000,
-    }
-  ]);
-  
+  const { signOut } = useAuth();
+  const { data: items = [], isLoading, error } = useItems();
+  const deleteItemMutation = useDeleteItem();
+
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const handleAddItem = (newItem: Omit<Item, "id">) => {
-    const item: Item = {
-      ...newItem,
-      id: Date.now().toString(),
-    };
-    setItems([item, ...items]);
-  };
 
   const handleItemClick = (item: Item) => {
     setSelectedItem(item);
@@ -58,9 +29,35 @@ const Index = () => {
   };
 
   const handleDeleteItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
-    toast.success("アイテムを削除しました");
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      deleteItemMutation.mutate(item);
+      setIsDetailDialogOpen(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">データを読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <p className="text-destructive mb-4">データの読み込みに失敗しました</p>
+          <p className="text-sm text-muted-foreground mb-4">{error.message}</p>
+          <Button onClick={() => window.location.reload()}>再読み込み</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,7 +140,6 @@ const Index = () => {
       <AddItemDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onAdd={handleAddItem}
       />
 
       <ItemDetailDialog

@@ -16,37 +16,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useCreateItem } from "@/hooks/useItems";
+import { uploadItemImage } from "@/lib/api/storage";
 
 interface AddItemDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (item: {
-    name: string;
-    category: "furniture" | "appliance";
-    imageUrl?: string;
-    purchaseDate: string;
-    price?: number;
-    notes?: string;
-  }) => void;
 }
 
-const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
+const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
+  const createItemMutation = useCreateItem();
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState<"furniture" | "appliance">(
     "furniture"
   );
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>();
   const [purchaseDate, setPurchaseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [price, setPrice] = useState("");
   const [notes, setNotes] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // ファイルサイズチェック（5MB）
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("ファイルサイズは5MB以下である必要があります");
+        return;
+      }
+
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -55,7 +60,17 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const resetForm = () => {
+    setName("");
+    setCategory("furniture");
+    setImageFile(null);
+    setImagePreview(undefined);
+    setPurchaseDate(new Date().toISOString().split("T")[0]);
+    setPrice("");
+    setNotes("");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name.trim()) {
@@ -63,25 +78,40 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
       return;
     }
 
-    onAdd({
-      name: name.trim(),
-      category,
-      imageUrl: imagePreview,
-      purchaseDate,
-      price: price ? parseFloat(price) : undefined,
-      notes: notes.trim() || undefined,
-    });
+    setUploading(true);
 
-    // フォームをリセット
-    setName("");
-    setCategory("furniture");
-    setImagePreview(undefined);
-    setPurchaseDate(new Date().toISOString().split("T")[0]);
-    setPrice("");
-    setNotes("");
-    onOpenChange(false);
+    try {
+      let imageUrl: string | undefined;
 
-    toast.success("アイテムを追加しました");
+      // 画像がある場合はアップロード
+      if (imageFile) {
+        try {
+          imageUrl = await uploadItemImage(imageFile);
+        } catch (error) {
+          console.error("Image upload error:", error);
+          toast.error("画像のアップロードに失敗しました");
+          setUploading(false);
+          return;
+        }
+      }
+
+      // アイテムを作成
+      await createItemMutation.mutateAsync({
+        name: name.trim(),
+        category_id: category,
+        image_url: imageUrl,
+        purchase_date: purchaseDate,
+        price: price ? parseFloat(price) : undefined,
+        notes: notes.trim() || undefined,
+      });
+
+      resetForm();
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Create item error:", error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -214,14 +244,23 @@ const AddItemDialog = ({ open, onOpenChange, onAdd }: AddItemDialogProps) => {
               variant="outline"
               onClick={() => onOpenChange(false)}
               className="flex-1 border-border"
+              disabled={uploading}
             >
               キャンセル
             </Button>
             <Button
               type="submit"
               className="flex-1 from-primary to-accent hover:opacity-90 text-primary-foreground"
+              disabled={uploading}
             >
-              追加
+              {uploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  追加中...
+                </>
+              ) : (
+                "追加"
+              )}
             </Button>
           </div>
         </form>

@@ -1,4 +1,4 @@
-import { type Item } from "@/components/ItemList";
+import { type Item } from "@/lib/api/items";
 import StatisticsCards from "@/components/StatisticsCards";
 import MonthlyPurchaseChart from "@/components/MonthlyPurchaseChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,9 +16,9 @@ const HomeTab = ({ items, onItemClick }: HomeTabProps) => {
     .filter(item => {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      return new Date(item.purchaseDate) >= weekAgo;
+      return new Date(item.purchase_date) >= weekAgo;
     })
-    .sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime())
+    .sort((a, b) => new Date(b.purchase_date).getTime() - new Date(a.purchase_date).getTime())
     .slice(0, 3);
 
   return (
@@ -40,7 +40,7 @@ const HomeTab = ({ items, onItemClick }: HomeTabProps) => {
         <CardContent>
           <p className="text-sm text-muted-foreground">
             今月は{items.filter(item => {
-              const itemDate = new Date(item.purchaseDate);
+              const itemDate = new Date(item.purchase_date);
               const now = new Date();
               return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
             }).length}件のアイテムを登録しました
