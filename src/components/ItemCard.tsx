@@ -45,7 +45,7 @@ const ItemCard = ({
             <Calendar className="h-3.5 w-3.5" />
             <span>{purchase_date}</span>
           </div>
-          {price !== undefined && (
+          {price && (
             <p className="font-semibold text-foreground">
               ¥{price.toLocaleString()}
             </p>
