@@ -31,7 +31,7 @@ const ItemCard = ({
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-secondary/50">
+          <div className="flex h-full w-full items-center justify-center bg-muted">
             <Tag className="h-12 w-12 text-muted-foreground/40" />
           </div>
         )}

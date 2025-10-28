@@ -63,7 +63,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/30">
+    <div className="min-h-screen bg-background">
       <Header onSearchClick={() => setIsSearchDialogOpen(true)} />
       
       <main className="container px-4 py-8 pb-24">
@@ -118,7 +118,7 @@ const Index = () => {
       {/* モバイル用FABボタン */}
       <Button
         onClick={() => setIsAddDialogOpen(true)}
-        className="sm:hidden fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground z-40"
+        className="sm:hidden fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground z-40"
         size="icon"
       >
         <Plus className="h-6 w-6" />
@@ -127,7 +127,7 @@ const Index = () => {
       {/* デスクトップ用追加ボタン */}
       <Button
         onClick={() => setIsAddDialogOpen(true)}
-        className="hidden sm:flex fixed bottom-8 right-8 shadow-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground"
+        className="hidden sm:flex fixed bottom-8 right-8 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
       >
         <Plus className="h-5 w-5 mr-2" />
         追加
