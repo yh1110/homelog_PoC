@@ -20,7 +20,7 @@ const ItemCard = ({
 }: ItemCardProps) => {
   return (
     <Card
-      className="group overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card hover:-translate-y-1 bg-card border-border"
+      className="group overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-lg bg-card border-border"
       onClick={onClick}
     >
       <div className="aspect-square overflow-hidden bg-muted">

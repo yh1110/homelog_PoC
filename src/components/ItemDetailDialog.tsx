@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, DollarSign, FileText, Trash2 } from "lucide-react";
+import { Calendar, DollarSign, FileText, Trash2, Download } from "lucide-react";
 import type { Item } from "@/lib/api/items";
 
 interface ItemDetailDialogProps {
@@ -19,7 +19,7 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-card border-border">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 pr-8">
             <DialogTitle className="text-2xl text-foreground">{item.name}</DialogTitle>
@@ -67,6 +67,51 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
               </div>
             )}
           </div>
+
+          {/* 書類ダウンロードセクション */}
+          {(item.warranty_url || item.receipt_url || item.manual_url) && (
+            <div className="space-y-3 pt-4 border-t border-border">
+              <p className="text-sm font-semibold text-foreground">書類</p>
+              <div className="space-y-2">
+                {item.warranty_url && (
+                  <a
+                    href={item.warranty_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-muted rounded-md hover:bg-muted/70 transition-colors"
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm flex-1">保証書</span>
+                    <Download className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                )}
+                {item.receipt_url && (
+                  <a
+                    href={item.receipt_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-muted rounded-md hover:bg-muted/70 transition-colors"
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm flex-1">領収書</span>
+                    <Download className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                )}
+                {item.manual_url && (
+                  <a
+                    href={item.manual_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-muted rounded-md hover:bg-muted/70 transition-colors"
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm flex-1">取扱説明書</span>
+                    <Download className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4 border-t border-border">
             <Button
