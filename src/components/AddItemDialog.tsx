@@ -107,7 +107,7 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
       // 保証書がある場合はアップロード
       if (warrantyFile) {
         try {
-          warrantyUrl = await uploadItemDocument(warrantyFile, 'warranty');
+          warrantyUrl = await uploadItemDocument(warrantyFile, "warranty");
         } catch (error) {
           console.error("Warranty upload error:", error);
           toast.error("保証書のアップロードに失敗しました");
@@ -119,7 +119,7 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
       // 領収書がある場合はアップロード
       if (receiptFile) {
         try {
-          receiptUrl = await uploadItemDocument(receiptFile, 'receipt');
+          receiptUrl = await uploadItemDocument(receiptFile, "receipt");
         } catch (error) {
           console.error("Receipt upload error:", error);
           toast.error("領収書のアップロードに失敗しました");
@@ -131,7 +131,7 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
       // 取扱説明書がある場合はアップロード
       if (manualFile) {
         try {
-          manualUrl = await uploadItemDocument(manualFile, 'manual');
+          manualUrl = await uploadItemDocument(manualFile, "manual");
         } catch (error) {
           console.error("Manual upload error:", error);
           toast.error("取扱説明書のアップロードに失敗しました");
@@ -164,7 +164,7 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-card border-border">
+      <DialogContent className=" max-h-[80vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-foreground">
             新しいアイテムを追加
@@ -292,13 +292,18 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
 
             {/* 保証書 */}
             <div className="space-y-2">
-              <Label htmlFor="warranty" className="text-sm text-muted-foreground">
+              <Label
+                htmlFor="warranty"
+                className="text-sm text-muted-foreground"
+              >
                 保証書
               </Label>
               {warrantyFile ? (
                 <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
                   <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm flex-1 truncate">{warrantyFile.name}</span>
+                  <span className="text-sm flex-1 truncate">
+                    {warrantyFile.name}
+                  </span>
                   <Button
                     type="button"
                     size="sm"
@@ -311,7 +316,9 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
               ) : (
                 <label className="flex items-center justify-center gap-2 p-3 cursor-pointer border-2 border-dashed border-border bg-muted/50 hover:bg-muted rounded-md transition-colors">
                   <Upload className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">クリックしてアップロード</span>
+                  <span className="text-sm text-muted-foreground">
+                    クリックしてアップロード
+                  </span>
                   <input
                     id="warranty"
                     type="file"
@@ -328,13 +335,18 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
 
             {/* 領収書 */}
             <div className="space-y-2">
-              <Label htmlFor="receipt" className="text-sm text-muted-foreground">
+              <Label
+                htmlFor="receipt"
+                className="text-sm text-muted-foreground"
+              >
                 領収書
               </Label>
               {receiptFile ? (
                 <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
                   <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm flex-1 truncate">{receiptFile.name}</span>
+                  <span className="text-sm flex-1 truncate">
+                    {receiptFile.name}
+                  </span>
                   <Button
                     type="button"
                     size="sm"
@@ -347,7 +359,9 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
               ) : (
                 <label className="flex items-center justify-center gap-2 p-3 cursor-pointer border-2 border-dashed border-border bg-muted/50 hover:bg-muted rounded-md transition-colors">
                   <Upload className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">クリックしてアップロード</span>
+                  <span className="text-sm text-muted-foreground">
+                    クリックしてアップロード
+                  </span>
                   <input
                     id="receipt"
                     type="file"
@@ -370,7 +384,9 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
               {manualFile ? (
                 <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
                   <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm flex-1 truncate">{manualFile.name}</span>
+                  <span className="text-sm flex-1 truncate">
+                    {manualFile.name}
+                  </span>
                   <Button
                     type="button"
                     size="sm"
@@ -383,7 +399,9 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
               ) : (
                 <label className="flex items-center justify-center gap-2 p-3 cursor-pointer border-2 border-dashed border-border bg-muted/50 hover:bg-muted rounded-md transition-colors">
                   <Upload className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">クリックしてアップロード</span>
+                  <span className="text-sm text-muted-foreground">
+                    クリックしてアップロード
+                  </span>
                   <input
                     id="manual"
                     type="file"
