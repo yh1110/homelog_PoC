@@ -7,49 +7,59 @@ import type { ProductInfo } from "@/types/dify";
  * @param userId - User ID for API request
  * @returns Extracted product information
  */
-export async function extractProductInfo(imageFile: File, userId: string): Promise<ProductInfo> {
-	// Upload image to Dify
-	const uploadResponse = await uploadFile(imageFile, userId);
+export async function extractProductInfo(
+  imageFile: File,
+  userId: string
+): Promise<ProductInfo> {
+  // Upload image to Dify
+  const uploadResponse = await uploadFile(imageFile, userId);
 
-	console.log(uploadResponse);
+  console.log(uploadResponse);
 
-	// Run workflow with uploaded image
-	const workflowResponse = await runWorkflow({
-		inputs: {
-			image: {
-				transfer_method: "local_file",
-				upload_file_id: uploadResponse.id,
-				type: "image",
-			},
-		},
-		user: userId,
-	});
+  // Run workflow with uploaded image
+  const workflowResponse = await runWorkflow({
+    inputs: {
+      image: {
+        transfer_method: "local_file",
+        upload_file_id: uploadResponse.id,
+        type: "image",
+      },
+    },
+    user: userId,
+  });
 
-	// Extract result from workflow output
-	const outputs = workflowResponse.data.outputs;
+  // Check if workflow failed
+  if (workflowResponse.data.status === "failed") {
+    const errorMsg = workflowResponse.data.error || "Unknown error";
+    console.error("Dify workflow failed:", errorMsg);
+    console.error("Full response:", workflowResponse);
+    throw new Error(`Difyワークフローエラー: ${errorMsg}`);
+  }
 
-	// Parse result based on actual response structure
-	if (outputs.result && typeof outputs.result === "object") {
-		return outputs.result as ProductInfo;
-	}
+  // Extract result from workflow output
+  const outputs = workflowResponse.data.outputs;
+  // Parse result based on actual response structure
+  // Try different possible response formats
+  if (outputs.result && typeof outputs.result === "object") {
+    return outputs.result as ProductInfo;
+  }
 
-	throw new Error("Invalid response format from Dify API");
-}
+  // If result is a string (JSON), try parsing it
+  if (outputs.result && typeof outputs.result === "string") {
+    try {
+      const parsed = JSON.parse(outputs.result);
+      return parsed as ProductInfo;
+    } catch (e) {
+      console.error("Failed to parse result as JSON:", e);
+    }
+  }
 
-/**
- * Format product information for notes field
- * @param productInfo - Product information object
- * @returns Formatted string for notes
- */
-export function formatProductInfoForNotes(productInfo: ProductInfo): string {
-	const lines = [
-		`商品名: ${productInfo.product_name}`,
-		`メーカー: ${productInfo.manufacturer}`,
-		`型番: ${productInfo.model_number}`,
-		`価格: ¥${productInfo.price.toLocaleString()}`,
-		`公式ページ: ${productInfo.official_page}`,
-		`マニュアル: ${productInfo.manual_link}`,
-	];
+  // If outputs itself contains the product info directly
+  if (outputs.product_name || outputs.manufacturer || outputs.model_number) {
+    return outputs as ProductInfo;
+  }
 
-	return lines.join("\n");
+  // Log the full response for debugging
+  console.error("Unexpected response structure:", workflowResponse);
+  throw new Error("Dify APIから有効なレスポンスが得られませんでした");
 }

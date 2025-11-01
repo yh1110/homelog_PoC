@@ -7,6 +7,9 @@ export type Item = {
   name: string;
   purchase_date: string;
   price?: number;
+  manufacturer?: string;
+  model_number?: string;
+  official_page?: string;
   notes?: string;
   image_url?: string;
   warranty_url?: string;

@@ -40,7 +40,7 @@ import { toast } from "sonner";
 import { useCreateItem } from "@/hooks/useItems";
 import { uploadItemImage, uploadItemDocument } from "@/lib/api/storage";
 import { cn } from "@/lib/utils";
-import { extractProductInfo, formatProductInfoForNotes } from "@/lib/extractProductInfo";
+import { extractProductInfo } from "@/lib/extractProductInfo";
 import supabase from "@/lib/supabase";
 
 const formSchema = z.object({
@@ -48,6 +48,18 @@ const formSchema = z.object({
   category: z.enum(["furniture", "appliance"]),
   purchaseDate: z.date(),
   price: z.string().optional(),
+  manufacturer: z.string().optional(),
+  modelNumber: z.string().optional(),
+  officialPage: z
+    .string()
+    .url("有効なURLを入力してください")
+    .optional()
+    .or(z.literal("")),
+  manualUrl: z
+    .string()
+    .url("有効なURLを入力してください")
+    .optional()
+    .or(z.literal("")),
   notes: z.string().optional(),
 });
 
@@ -76,6 +88,10 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
       category: "furniture",
       purchaseDate: new Date(),
       price: "",
+      manufacturer: "",
+      modelNumber: "",
+      officialPage: "",
+      manualUrl: "",
       notes: "",
     },
   });
@@ -98,22 +114,43 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
     }
   };
 
+  // 自動入力ハンドラー
   const handleAutoFill = async () => {
     if (!imageFile) return;
 
     setIsExtracting(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         toast.error("ログインが必要です");
         return;
       }
 
       const productInfo = await extractProductInfo(imageFile, user.id);
-      const formattedNotes = formatProductInfoForNotes(productInfo);
 
-      form.setValue('notes', formattedNotes);
+      // 各フィールドに個別に値を設定
+      if (productInfo.product_name) {
+        form.setValue("name", productInfo.product_name);
+      }
+      if (productInfo.price) {
+        form.setValue("price", productInfo.price.toString());
+      }
+      if (productInfo.manufacturer) {
+        form.setValue("manufacturer", productInfo.manufacturer);
+      }
+      if (productInfo.model_number) {
+        form.setValue("modelNumber", productInfo.model_number);
+      }
+      if (productInfo.official_page) {
+        form.setValue("officialPage", productInfo.official_page);
+      }
+      if (productInfo.manual_link) {
+        form.setValue("manualUrl", productInfo.manual_link);
+      }
+
       toast.success("商品情報を自動入力しました");
     } catch (error) {
       console.error("Auto-fill error:", error);
@@ -189,6 +226,9 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
         }
       }
 
+      // マニュアルURLが入力されている場合は、ファイルアップロードより優先
+      const finalManualUrl = values.manualUrl?.trim() || manualUrl;
+
       // アイテムを作成
       await createItemMutation.mutateAsync({
         name: values.name.trim(),
@@ -196,9 +236,12 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
         image_url: imageUrl,
         warranty_url: warrantyUrl,
         receipt_url: receiptUrl,
-        manual_url: manualUrl,
+        manual_url: finalManualUrl,
         purchase_date: format(values.purchaseDate, "yyyy-MM-dd"),
         price: values.price ? parseFloat(values.price) : undefined,
+        manufacturer: values.manufacturer?.trim() || undefined,
+        model_number: values.modelNumber?.trim() || undefined,
+        official_page: values.officialPage?.trim() || undefined,
         notes: values.notes?.trim() || undefined,
       });
 
@@ -388,6 +431,63 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
               />
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="manufacturer"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>メーカー</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="例：ニトリ"
+                        className="bg-background border-border"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="modelNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>型番</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="例：ABC-1234"
+                        className="bg-background border-border"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="officialPage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>公式ページ</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="url"
+                      placeholder="例：https://example.com/product"
+                      className="bg-background border-border"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="notes"
@@ -489,10 +589,10 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
                 )}
               </div>
 
-              {/* 取扱説明書 */}
+              {/* 取扱説明書又はマニュアルURL */}
               <div className="space-y-2">
                 <FormLabel className="text-sm text-muted-foreground">
-                  取扱説明書
+                  取扱説明書又はマニュアルURL
                 </FormLabel>
                 {manualFile ? (
                   <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
@@ -526,6 +626,23 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
                     />
                   </label>
                 )}
+                <FormField
+                  control={form.control}
+                  name="manualUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="url"
+                          placeholder="又はマニュアルのURLを入力"
+                          className="bg-background border-border"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 

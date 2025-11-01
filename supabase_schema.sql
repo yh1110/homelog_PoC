@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS items (
   name TEXT NOT NULL,
   purchase_date DATE NOT NULL,
   price NUMERIC(10, 2),
+  manufacturer TEXT,
+  model_number TEXT,
+  official_page TEXT,
   notes TEXT,
 
   -- 画像・書類関連
