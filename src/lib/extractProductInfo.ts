@@ -1,5 +1,5 @@
-import { uploadFile, runWorkflow } from './difyClient';
-import type { ProductInfo } from '@/types/dify';
+import { uploadFile, runWorkflow } from "./difyClient";
+import type { ProductInfo } from "@/types/dify";
 
 /**
  * Extract product information from an image using Dify API
@@ -7,36 +7,33 @@ import type { ProductInfo } from '@/types/dify';
  * @param userId - User ID for API request
  * @returns Extracted product information
  */
-export async function extractProductInfo(
-  imageFile: File,
-  userId: string
-): Promise<ProductInfo> {
-  // Upload image to Dify
-  const uploadResponse = await uploadFile(imageFile, userId);
+export async function extractProductInfo(imageFile: File, userId: string): Promise<ProductInfo> {
+	// Upload image to Dify
+	const uploadResponse = await uploadFile(imageFile, userId);
 
-  // Run workflow with uploaded image
-  const workflowResponse = await runWorkflow({
-    inputs: {
-      image: [
-        {
-          transfer_method: 'local_file',
-          upload_file_id: uploadResponse.id,
-          type: 'image',
-        },
-      ],
-    },
-    user: userId,
-  });
+	console.log(uploadResponse);
 
-  // Extract result from workflow output
-  const outputs = workflowResponse.data.outputs;
+	// Run workflow with uploaded image
+	const workflowResponse = await runWorkflow({
+		inputs: {
+			image: {
+				transfer_method: "local_file",
+				upload_file_id: uploadResponse.id,
+				type: "image",
+			},
+		},
+		user: userId,
+	});
 
-  // Parse result based on actual response structure
-  if (outputs.result && typeof outputs.result === 'object') {
-    return outputs.result as ProductInfo;
-  }
+	// Extract result from workflow output
+	const outputs = workflowResponse.data.outputs;
 
-  throw new Error('Invalid response format from Dify API');
+	// Parse result based on actual response structure
+	if (outputs.result && typeof outputs.result === "object") {
+		return outputs.result as ProductInfo;
+	}
+
+	throw new Error("Invalid response format from Dify API");
 }
 
 /**
@@ -45,14 +42,14 @@ export async function extractProductInfo(
  * @returns Formatted string for notes
  */
 export function formatProductInfoForNotes(productInfo: ProductInfo): string {
-  const lines = [
-    `商品名: ${productInfo.product_name}`,
-    `メーカー: ${productInfo.manufacturer}`,
-    `型番: ${productInfo.model_number}`,
-    `価格: ¥${productInfo.price.toLocaleString()}`,
-    `公式ページ: ${productInfo.official_page}`,
-    `マニュアル: ${productInfo.manual_link}`,
-  ];
+	const lines = [
+		`商品名: ${productInfo.product_name}`,
+		`メーカー: ${productInfo.manufacturer}`,
+		`型番: ${productInfo.model_number}`,
+		`価格: ¥${productInfo.price.toLocaleString()}`,
+		`公式ページ: ${productInfo.official_page}`,
+		`マニュアル: ${productInfo.manual_link}`,
+	];
 
-  return lines.join('\n');
+	return lines.join("\n");
 }
