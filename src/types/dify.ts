@@ -79,3 +79,13 @@ export interface DifyErrorResponse {
   message: string;
   status: number;
 }
+
+// Product information extracted from image
+export interface ProductInfo {
+  product_name: string;
+  manufacturer: string;
+  model_number: string;
+  price: number;
+  official_page: string;
+  manual_link: string;
+}

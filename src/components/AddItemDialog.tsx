@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Sparkles } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -40,6 +40,8 @@ import { toast } from "sonner";
 import { useCreateItem } from "@/hooks/useItems";
 import { uploadItemImage, uploadItemDocument } from "@/lib/api/storage";
 import { cn } from "@/lib/utils";
+import { extractProductInfo, formatProductInfoForNotes } from "@/lib/extractProductInfo";
+import supabase from "@/lib/supabase";
 
 const formSchema = z.object({
   name: z.string().min(1, "名前を入力してください"),
@@ -65,6 +67,7 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [manualFile, setManualFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -92,6 +95,31 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAutoFill = async () => {
+    if (!imageFile) return;
+
+    setIsExtracting(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("ログインが必要です");
+        return;
+      }
+
+      const productInfo = await extractProductInfo(imageFile, user.id);
+      const formattedNotes = formatProductInfoForNotes(productInfo);
+
+      form.setValue('notes', formattedNotes);
+      toast.success("商品情報を自動入力しました");
+    } catch (error) {
+      console.error("Auto-fill error:", error);
+      toast.error("商品情報の取得に失敗しました");
+    } finally {
+      setIsExtracting(false);
     }
   };
 
@@ -197,25 +225,46 @@ const AddItemDialog = ({ open, onOpenChange }: AddItemDialogProps) => {
               <FormLabel className="text-foreground">写真</FormLabel>
               <div className="flex flex-col gap-3">
                 {imagePreview ? (
-                  <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="h-full w-full object-cover"
-                    />
+                  <>
+                    <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          setImagePreview(undefined);
+                          setImageFile(null);
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <Button
                       type="button"
-                      size="icon"
-                      variant="destructive"
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setImagePreview(undefined);
-                        setImageFile(null);
-                      }}
+                      variant="outline"
+                      onClick={handleAutoFill}
+                      disabled={isExtracting}
+                      className="w-full border-border"
                     >
-                      <X className="h-4 w-4" />
+                      {isExtracting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          商品情報を取得中...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          自動入力
+                        </>
+                      )}
                     </Button>
-                  </div>
+                  </>
                 ) : (
                   <label className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 hover:bg-muted transition-colors">
                     <Upload className="h-8 w-8 text-muted-foreground mb-2" />
