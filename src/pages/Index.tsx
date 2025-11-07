@@ -6,6 +6,7 @@ import AddItemDialog from "@/components/AddItemDialog";
 import EditItemDialog from "@/components/EditItemDialog";
 import ItemDetailDialog from "@/components/ItemDetailDialog";
 import SearchDialog from "@/components/SearchDialog";
+import NotificationPanel from "@/components/NotificationPanel";
 import HomeTab from "@/components/HomeTab";
 import CategoryTab from "@/components/CategoryTab";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ const Index = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleItemClick = (item: Item) => {
@@ -69,7 +71,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header onSearchClick={() => setIsSearchDialogOpen(true)} />
+      <Header
+        onSearchClick={() => setIsSearchDialogOpen(true)}
+        onNotificationClick={() => setIsNotificationPanelOpen(true)}
+      />
 
       <main className="container px-4 py-8 pb-24">
         <Tabs defaultValue="home" className="w-full">
@@ -159,6 +164,11 @@ const Index = () => {
         onOpenChange={setIsDetailDialogOpen}
         onDelete={handleDeleteItem}
         onEdit={handleEditItem}
+      />
+
+      <NotificationPanel
+        open={isNotificationPanelOpen}
+        onOpenChange={setIsNotificationPanelOpen}
       />
     </div>
   );
