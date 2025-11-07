@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useItems, useDeleteItem } from "@/hooks/useItems";
 import { type Item } from "@/lib/api/items";
 import Header from "@/components/Header";
@@ -12,6 +11,7 @@ import CategoryTab from "@/components/CategoryTab";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Home, Sofa, Zap, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/UseAuth";
 
 const Index = () => {
   const { signOut } = useAuth();
@@ -58,7 +58,9 @@ const Index = () => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <p className="text-destructive mb-4">データの読み込みに失敗しました</p>
+          <p className="text-destructive mb-4">
+            データの読み込みに失敗しました
+          </p>
           <p className="text-sm text-muted-foreground mb-4">{error.message}</p>
           <Button onClick={() => window.location.reload()}>再読み込み</Button>
         </div>
@@ -69,47 +71,47 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header onSearchClick={() => setIsSearchDialogOpen(true)} />
-      
+
       <main className="container px-4 py-8 pb-24">
         <Tabs defaultValue="home" className="w-full">
           <TabsContent value="home" className="mt-0">
             <HomeTab items={items} onItemClick={handleItemClick} />
           </TabsContent>
-          
+
           <TabsContent value="furniture" className="mt-0">
-            <CategoryTab 
-              items={items} 
-              category="furniture" 
-              onItemClick={handleItemClick} 
+            <CategoryTab
+              items={items}
+              category="furniture"
+              onItemClick={handleItemClick}
             />
           </TabsContent>
-          
+
           <TabsContent value="appliance" className="mt-0">
-            <CategoryTab 
-              items={items} 
-              category="appliance" 
-              onItemClick={handleItemClick} 
+            <CategoryTab
+              items={items}
+              category="appliance"
+              onItemClick={handleItemClick}
             />
           </TabsContent>
 
           {/* 下部タブナビゲーション */}
           <TabsList className="fixed bottom-0 left-0 right-0 h-16 w-full rounded-none border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 grid grid-cols-3">
-            <TabsTrigger 
-              value="home" 
+            <TabsTrigger
+              value="home"
               className="flex flex-col items-center gap-1 data-[state=active]:text-primary"
             >
               <Home className="h-5 w-5" />
               <span className="text-xs">ホーム</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="furniture" 
+            <TabsTrigger
+              value="furniture"
               className="flex flex-col items-center gap-1 data-[state=active]:text-primary"
             >
               <Sofa className="h-5 w-5" />
               <span className="text-xs">家具</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="appliance" 
+            <TabsTrigger
+              value="appliance"
               className="flex flex-col items-center gap-1 data-[state=active]:text-primary"
             >
               <Zap className="h-5 w-5" />
@@ -144,10 +146,7 @@ const Index = () => {
         onSearchChange={setSearchQuery}
       />
 
-      <AddItemDialog
-        open={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-      />
+      <AddItemDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
 
       <EditItemDialog
         item={selectedItem}

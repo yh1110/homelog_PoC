@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Home as HomeIcon, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/UseAuth";
 
 export default function Auth() {
   const { signInWithGoogle } = useAuth();
@@ -71,7 +71,7 @@ export default function Auth() {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                   >
-                    <g fill="none" fill-rule="evenodd" clip-rule="evenodd">
+                    <g fill="none" fillRule="evenodd" clipRule="evenodd">
                       <path
                         fill="#F44336"
                         d="M7.209 1.061c.725-.081 1.154-.081 1.933 0a6.57 6.57 0 0 1 3.65 1.82a100 100 0 0 0-1.986 1.93q-1.876-1.59-4.188-.734q-1.696.78-2.362 2.528a78 78 0 0 1-2.148-1.658a.26.26 0 0 0-.16-.027q1.683-3.245 5.26-3.86"
