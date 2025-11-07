@@ -4,6 +4,7 @@ import { useItems, useDeleteItem } from "@/hooks/useItems";
 import { type Item } from "@/lib/api/items";
 import Header from "@/components/Header";
 import AddItemDialog from "@/components/AddItemDialog";
+import EditItemDialog from "@/components/EditItemDialog";
 import ItemDetailDialog from "@/components/ItemDetailDialog";
 import SearchDialog from "@/components/SearchDialog";
 import HomeTab from "@/components/HomeTab";
@@ -18,6 +19,7 @@ const Index = () => {
   const deleteItemMutation = useDeleteItem();
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
@@ -34,6 +36,11 @@ const Index = () => {
       deleteItemMutation.mutate(item);
       setIsDetailDialogOpen(false);
     }
+  };
+
+  const handleEditItem = (item: Item) => {
+    setSelectedItem(item);
+    setIsEditDialogOpen(true);
   };
 
   if (isLoading) {
@@ -142,11 +149,18 @@ const Index = () => {
         onOpenChange={setIsAddDialogOpen}
       />
 
+      <EditItemDialog
+        item={selectedItem}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
+
       <ItemDetailDialog
         item={selectedItem}
         open={isDetailDialogOpen}
         onOpenChange={setIsDetailDialogOpen}
         onDelete={handleDeleteItem}
+        onEdit={handleEditItem}
       />
     </div>
   );

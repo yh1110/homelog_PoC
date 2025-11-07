@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, DollarSign, FileText, Trash2, Download } from "lucide-react";
+import { Calendar, DollarSign, FileText, Trash2, Download, Pencil, ExternalLink, Building2, Hash } from "lucide-react";
 import type { Item } from "@/lib/api/items";
 
 interface ItemDetailDialogProps {
@@ -9,9 +9,10 @@ interface ItemDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDelete: (id: string) => void;
+  onEdit: (item: Item) => void;
 }
 
-const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDialogProps) => {
+const ItemDetailDialog = ({ item, open, onOpenChange, onDelete, onEdit }: ItemDetailDialogProps) => {
   if (!item) return null;
 
   const categoryLabel = item.category_id === "furniture" ? "家具" : "家電";
@@ -53,6 +54,43 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
                 <div>
                   <p className="text-sm text-muted-foreground">価格</p>
                   <p className="font-medium">¥{item.price.toLocaleString()}</p>
+                </div>
+              </div>
+            )}
+
+            {item.manufacturer && (
+              <div className="flex items-center gap-3 text-foreground">
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">メーカー</p>
+                  <p className="font-medium">{item.manufacturer}</p>
+                </div>
+              </div>
+            )}
+
+            {item.model_number && (
+              <div className="flex items-center gap-3 text-foreground">
+                <Hash className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">型番</p>
+                  <p className="font-medium">{item.model_number}</p>
+                </div>
+              </div>
+            )}
+
+            {item.official_page && (
+              <div className="flex items-start gap-3 text-foreground">
+                <ExternalLink className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-1">公式ページ</p>
+                  <a
+                    href={item.official_page}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline break-all"
+                  >
+                    {item.official_page}
+                  </a>
                 </div>
               </div>
             )}
@@ -115,6 +153,17 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
 
           <div className="flex gap-3 pt-4 border-t border-border">
             <Button
+              variant="outline"
+              onClick={() => {
+                onEdit(item);
+                onOpenChange(false);
+              }}
+              className="flex-1 border-border"
+            >
+              <Pencil className="h-4 w-4 mr-2" />
+              編集
+            </Button>
+            <Button
               variant="destructive"
               onClick={() => {
                 onDelete(item.id);
@@ -125,14 +174,14 @@ const ItemDetailDialog = ({ item, open, onOpenChange, onDelete }: ItemDetailDial
               <Trash2 className="h-4 w-4 mr-2" />
               削除
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1 border-border"
-            >
-              閉じる
-            </Button>
           </div>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full border-border"
+          >
+            閉じる
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
