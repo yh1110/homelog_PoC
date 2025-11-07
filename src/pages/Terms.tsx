@@ -73,7 +73,7 @@ const Terms = () => {
   return (
     <Dialog open={true} onOpenChange={() => {}}>
       <DialogContent
-        className="max-h-[95vh] overflow-hidden flex flex-col"
+        className="max-h-[85vh] overflow-hidden flex flex-col"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         isShowCloseButton={false}
