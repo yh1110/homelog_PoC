@@ -8,25 +8,6 @@ import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "./contexts/UseAuth";
 
-// 認証が必要なルート（利用規約チェックなし）
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  return <>{children}</>;
-}
-
 // 認証＋利用規約同意が必要なルート
 function TermsProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, userProfile, profileLoading } = useAuth();
@@ -45,7 +26,12 @@ function TermsProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // 利用規約未同意の場合は利用規約ページへ
   if (userProfile && !userProfile.terms_accepted) {
-    return <Navigate to="/terms" replace />;
+    return (
+      <>
+        {children}
+        <Terms />
+      </>
+    );
   }
 
   return <>{children}</>;
@@ -58,14 +44,6 @@ const App = () => (
     <BrowserRouter>
       <Routes>
         <Route path="/auth" element={<Auth />} />
-        <Route
-          path="/terms"
-          element={
-            <ProtectedRoute>
-              <Terms />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/"
           element={

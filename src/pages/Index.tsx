@@ -14,7 +14,6 @@ import { Plus, Home, Sofa, Zap, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/UseAuth";
 
 const Index = () => {
-  const { signOut } = useAuth();
   const { data: items = [], isLoading, error } = useItems();
   const deleteItemMutation = useDeleteItem();
 

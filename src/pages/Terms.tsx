@@ -5,13 +5,13 @@ import TermsContent from "@/components/TermsContent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Loader2, FileText } from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/UseAuth";
 
@@ -71,22 +71,27 @@ const Terms = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl shadow-lg">
-        <CardHeader className="text-center border-b">
-          <div className="flex justify-center mb-4">
-            <FileText className="h-12 w-12 text-primary" />
-          </div>
-          <CardTitle className="text-2xl">テスト利用に関する同意事項</CardTitle>
-          <CardDescription>
+    <Dialog open={true} onOpenChange={() => {}}>
+      <DialogContent
+        className="max-h-[95vh] overflow-hidden flex flex-col"
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        isShowCloseButton={false}
+      >
+        <DialogHeader>
+          <DialogTitle className="text-2xl text-center">
+            テスト利用に関する同意事項
+          </DialogTitle>
+          <DialogDescription className="text-center">
             本アプリをご利用いただくには、テスト利用に関する同意事項への同意が必要です。
             <br />
             内容をよくお読みいただき、同意いただける場合はチェックボックスをチェックしてください。
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-6">
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex-1 overflow-hidden flex flex-col">
           {/* スクロール可能な利用規約本文 */}
-          <div className="h-[400px] overflow-y-auto border rounded-lg p-6 bg-muted/30 mb-6">
+          <div className="flex-1 overflow-y-auto border rounded-lg p-6 bg-muted/30 mb-6">
             <TermsContent />
           </div>
 
@@ -96,7 +101,8 @@ const Terms = () => {
               id="terms"
               checked={hasReadTerms}
               onCheckedChange={(checked) => setHasReadTerms(checked === true)}
-              className="mt-1"
+              className="mt-1 ml-1"
+              disabled={updateProfileMutation.isPending}
             />
             <label
               htmlFor="terms"
@@ -110,7 +116,7 @@ const Terms = () => {
           <Button
             onClick={handleAccept}
             disabled={!hasReadTerms || updateProfileMutation.isPending}
-            className="w-full"
+            className="py-4"
             size="lg"
           >
             {updateProfileMutation.isPending ? (
@@ -122,9 +128,9 @@ const Terms = () => {
               "同意して利用を開始する"
             )}
           </Button>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
